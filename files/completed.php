@@ -12,7 +12,6 @@ if($task === "completed"){
 }else{
 	$_SESSION['game']['task'] = false;
 	session_destroy();
-	header("Location: ../index.php");
 }
 if($_SESSION['game']['task'] === "completed"){
 	echo "<div style='margin:10em auto;width:30em;'>";
@@ -46,6 +45,4 @@ if($_SESSION['game']['task'] === "completed"){
 	echo "</tr>";
 	echo "</table>";
 	echo "<a href='/completed.php?task=0'>play again</a>";
-}else{
-	include "../404error.php";
 }
