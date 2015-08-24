@@ -11,7 +11,7 @@ print "<pre>".print_r($_SESSION, true)."</pre>";
 //print "<pre>".print_r($_SESSION["game"]["data"]["letters"], true)."</pre>";
 //echo count($_SESSION["game"]["data"]["used_words"]);
 ?>
-<style>
+<style scoped>
 body{
 	color: #fff;
 	background-color: #000;

@@ -7,9 +7,6 @@
  * @copyright Copyright (c) 2012 - 2015 Muntashir Al-Islam
  */
 
-require_once __DIR__."/classes/Template.php";
-require_once __DIR__."/classes/WordGrid_Main.php";
-require_once __DIR__."/classes/WordGrid_SetupPlayers.php";
 
 session_start();
 
@@ -21,18 +18,20 @@ if(isset($_SESSION['game']['start'])){
     if($_SESSION['game']['start']){
         if(isset($_SESSION["game"]["player1"])){
             if(isset($_SESSION["game"]["player2"])){
-                require_once __DIR__ . "/files/main_game.php";
+                // setup main game
+                require_once __DIR__."/classes/WordGrid_MainGame.php";
+                echo (new \classes\WordGrid_MainGame())->out();
             }else{
                 // setup player 2
+                require_once __DIR__."/classes/WordGrid_SetupPlayers.php";
                 $player2 = new \classes\WordGrid_SetupPlayers('player2');
-
                 echo $player2->out();
             }
         }else{
-            $player1 = new \classes\WordGrid_SetupPlayers('player1');
-
-            echo $player1->out();
             // setup player 1
+            require_once __DIR__."/classes/WordGrid_SetupPlayers.php";
+            $player1 = new \classes\WordGrid_SetupPlayers('player1');
+            echo $player1->out();
         }
     }
 }else{
@@ -40,8 +39,10 @@ if(isset($_SESSION['game']['start'])){
     switch($req_phase){
         case 'start':
             $_SESSION['game']['start'] = true;
+            header('Location: index.php'); // to fix blank page error
             break;
         case 'help':
+            require_once __DIR__."/classes/Template.php";
             echo (new \classes\Template("<style>.page{background-image: url('images/help.bmp');}</style>"))->out();
             break;
         case 'quit':
@@ -49,6 +50,7 @@ if(isset($_SESSION['game']['start'])){
             echo "<script>window.location.assign('about:blank')</script>";
             break;
         default:
+            require_once __DIR__."/classes/WordGrid_Main.php";
             echo (new \classes\WordGrid_Main())->out();
     }
 }

@@ -1,42 +1,40 @@
 <?php
+// not working for ltr
 session_start();
-error_reporting(0);
-/* === Vulnerability ===
- * still can use javascript injection to input letters in blank grids
- * can use an pseudo-input-form to input 'store', 'position', 'player'
- * inputs are not filtered
- */
 
 if(isset($_POST["store"], $_POST['position'], $_POST['player'])){ // get info [not secured!]
-	$store = strtolower($_POST["store"]);
-	$position = $_POST['position'];
-	$active_player = $_POST['player'];
+	/** @var string $store */
+	$store = strtolower(filter_input(INPUT_POST,'store',FILTER_SANITIZE_STRING));
+	/** @var int $position */
+	$position = (int)filter_input(INPUT_POST,'position',FILTER_SANITIZE_NUMBER_INT);
+	/** @var string $active_player */
+	$active_player = filter_input(INPUT_POST,'player',FILTER_SANITIZE_STRING);
 }else{
-	$store = "";
-	$position = "null";
-	$active_player = 0;
+	$store = '';
+	$position = -1;
+	$active_player = '';
 }
 require_once "dictionary.php";
 
-$_SESSION["game"]["data"]["last_player"] = $active_player;
+$_SESSION["game"]["data"]["last_player"] = ($active_player == 'p1') ? 'p1': 'p2';
 
-if(!isset($_SESSION['game']['data']['letters'][$position])){ // store letter only if the grid is blank (for the protection against javascript injection)
+if(!isset($_SESSION['game']['data']['letters'][$position])){ // store the letter only if the grid is blank (for the protection against javascript injection)
 $_SESSION["game"]["data"]["letters"][$position] = $store;
 }
 
 
-function checkWord($word, $dictionary){ // checks the word & returns points
-	$isUsed = false;
+function checkWord($word, $dictionary){ // checks the word if it has already been used & returns points
+	$is_used = false;
 	$point = 0;
 	for($i=0;$i<count($_SESSION["game"]["data"]["used_words"]);$i++){
 		if($word === $_SESSION["game"]["data"]["used_words"][$i]){
-			$isUsed = true;
+			$is_used = true;
 			break;
 		}else{
 			continue;
 		}
 	}
-	if($isUsed === false){
+	if(!$is_used){
 		for($i=0;$i<count($dictionary);$i++){
 			if($dictionary[$i] === $word){
 				$point = strlen($word);
@@ -49,11 +47,9 @@ function checkWord($word, $dictionary){ // checks the word & returns points
 	return $point;
 }
 
-$count_before = $position - $check_pos + 11;
-$count_after = $check_pos - $position;
 
 /*==== Checking Out The Rows ====*/
-
+/*
 if($position < 10){ // indexing positions
 	$check_pos = 10;
 }else if($position >= 10 && $position < 20){
@@ -74,13 +70,18 @@ if($position < 10){ // indexing positions
 	$check_pos = 90;
 }else if($position >= 90 && $position < 100){
 	$check_pos = 100;
-}
+}*/
+
+$check_position = ($position < 10) ? 10 : (($position < 20) ? 20 : (($position < 30) ? 30 : (($position < 40) ? 40 : (($position < 50) ? 50 : (($position < 60) ? 60: (($position < 70) ? 70 : (($position < 80) ? 80 : (($position < 90) ? 90 : 100))))))));
+
+$count_before = $position - $check_position + 11;
+$count_after = $check_position - $position;
 
 $word1 = "";
 $point1 = 0;
 $count = 0;
 $used_word_count = count($_SESSION["game"]["data"]["used_words"]);
-for($i=0; $i<$count_before; $i++){ // counts the continuous number of letters to form a word from rtl
+for($i=0; $i<$count_before; $i++){ // counts the continuous number of letters to form a word from ltr before
 	if(!isset($_SESSION["game"]["data"]["letters"][$position-$i])){
 		break;
 	}else{
@@ -102,7 +103,7 @@ for($j=$count-1;$j>=0; $j--){ // checks ltr before
 $word2 = "";
 $point2 = 0;
 $count = 0;
-for($i=0; $i<$count_after; $i++){ // counts the continuous number of letters to form a word from ltr
+for($i=0; $i<$count_after; $i++){ // counts the continuous number of letters to form a word from ltr after
 	if(!isset($_SESSION["game"]["data"]["letters"][$position+$i])){
 		break;
 	}else{
@@ -113,7 +114,7 @@ for($i=0; $i<$count_after; $i++){ // counts the continuous number of letters to 
 
 for($j=$count-1;$j>=0; $j--){ // checks ltr after
 	$word2 = "";
-	for($i=$j; $i>=0; $i--){
+	for($i=0; $i<=$j; $i++){
 		$word2 .= $_SESSION["game"]["data"]["letters"][$position+$i];
 	}
 	$point2 = checkWord($word2, $dictionary);
@@ -214,12 +215,12 @@ if($used_word !== ""){
 if($active_player == "p1"){
 	$_SESSION["game"]["player1"]["points"] += $point;
 	$points = $_SESSION["game"]["player1"]["points"];
-}else if($active_player == "p2"){
+}else{
 	$_SESSION["game"]["player2"]["points"] += $point;
 	$points = $_SESSION["game"]["player2"]["points"];
 }
 
-echo $points." ".$active_player." ".$used_word." ".$_SESSION["game"]["player2"]["points"];
+echo $points." ".$active_player." ".$used_word;
 /*
 $points = (string)$points;
 

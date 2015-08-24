@@ -31,7 +31,7 @@ class Template {
 }
 	</style>
 </head>
-<body onload=\"startTime();\" style=\"margin:auto;\">
+<body style=\"margin:auto;\">
  <div class=\"page\">
  {$this->page}
  </div>

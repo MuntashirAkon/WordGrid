@@ -14,16 +14,22 @@ class WordGrid_SetupPlayers{
     private $player;
     public function __construct($which_player){
         $this->player = $which_player;
-        //
+        // configure user
 		if(isset($_GET[$this->player], $_GET['sex'])){
-			$player = filter_input(INPUT_GET,'player1',FILTER_SANITIZE_STRING);
+			$player = filter_input(INPUT_GET,$this->player,FILTER_SANITIZE_STRING);
 			$_SESSION["game"][$this->player]["name"] = $player != "" ? $player : $this->player;
 			$_SESSION["game"][$this->player]["sex"] = $_GET['sex'] == "female" ? "female" : "male";
 			$_SESSION["game"][$this->player]["points"] = 0;
+			header('Location: index.php'); // to fix the same page two times
 		}
     }
-    public function out(){
+
+	/**
+	 * @return string
+     */
+	public function out(){
 		/** @var array $player1 */
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		$player1 = Array(
 			"background" => "player1.bmp",
 			"male" => "boy.bmp",
@@ -41,8 +47,8 @@ class WordGrid_SetupPlayers{
 			"css_sex_male_fix" => "top: 25px;left: 520px;",
 			"css_sex_female_fix" => "top: 32px;left: 86px;"
 		);
-        $page = <<< EOF
-<style>
+		/** @var string $page */
+		$page = "<style>
 .page{
 	background-image: url('images/{${$this->player}['background']}');
 }
@@ -91,36 +97,35 @@ class WordGrid_SetupPlayers{
 }
 </style>
 <script>
-    var sex = "male";
+    var sex = \"male\";
     $(document).ready(function(){
         $('.sex.female').click(function(){
             sex = 'female';
-            $('.sex_selector').addClass("left").removeClass("right");
+            $('.sex_selector').addClass(\"left\").removeClass(\"right\");
         });
         $('.sex.male').click(function(){
             sex = 'male';
-            $('.sex_selector').addClass("right").removeClass("left");
+            $('.sex_selector').addClass(\"right\").removeClass(\"left\");
         });
     });
     function setup_player_info(){
         var player = $('input#{$this->player}');
-        if(player.val() == ""){
-            player.val("{$this->player}");
+        if(player.val() == \"\"){
+            player.val(\"{$this->player}\");
         }
         $('input#sex').val(sex);
         player_info.submit();
         return true;
     }
 </script>
-<form id="player_info" name="player_info" method="get" action="" onsubmit="setup_player_info()">
-    <label><input type="text" name="{$this->player}" class="fixed_input" id="{$this->player}" autocomplete='off' /></label>
-    <input type="hidden" name="sex" class="fixed_input" id="sex" value="male" autocomplete='off' />
-    <div id="submit" onclick="setup_player_info()"></div>
-    <img src="images/character/{${$this->player}['female']}" class='sex female' style="width: 175px;position: relative;{${$this->player}['css_sex_female_fix']}" />
-    <img src="images/character/{${$this->player}['male']}" class='sex male' style="width: 178px;position: relative;{${$this->player}['css_sex_male_fix']}" />
-    <div class="sex_selector"><img src='images/tick.bmp' /></div>
-</form>
-EOF;
+<form id=\"player_info\" name=\"player_info\" method=\"get\" action=\"\" onsubmit=\"setup_player_info()\">
+    <label><input type=\"text\" name=\"{$this->player}\" class=\"fixed_input\" id=\"{$this->player}\" autocomplete='off' /></label>
+    <input type=\"hidden\" name=\"sex\" class=\"fixed_input\" id=\"sex\" value=\"male\" autocomplete='off' />
+    <div id=\"submit\" onclick=\"setup_player_info()\"></div>
+    <img src=\"images/character/{${$this->player}['female']}\" class='sex female' style=\"width: 175px;position: relative;{${$this->player}['css_sex_female_fix']}\" />
+    <img src=\"images/character/{${$this->player}['male']}\" class='sex male' style=\"width: 178px;position: relative;{${$this->player}['css_sex_male_fix']}\" />
+    <div class=\"sex_selector\"><img src='images/tick.bmp' /></div>
+</form>";
 		require_once __DIR__."/Template.php";
         return (new Template($page))->out();
     }
