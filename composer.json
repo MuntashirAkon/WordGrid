@@ -1,18 +1,18 @@
 {
-    "name": "muntashir/word-grid",
-    "version" : "1.0.0"
-    "description": "WordGrid Game",
-    "keywords": ["WordGrid","Game","PHP","Word","Grid"],
-    "homepage": "http://http://muntashir.bplaced.net/WordGrid",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
+    "name" : "muntashir/word-grid",
+    "version" : "1.0.0",
+    "description" : "WordGrid Game",
+    "keywords" : ["WordGrid","Game","PHP","Word","Grid"],
+    "homepage" : "http://http://muntashir.bplaced.net/WordGrid",
+    "type" : "library",
+    "license" : "MIT",
+    "authors" : [
         {
-            "name": "Muntashir Al-Islam",
-            "homepage": "http://muntashir-akon.blogspot.com"
+            "name" : "Muntashir Al-Islam",
+            "homepage" : "http://muntashir-akon.blogspot.com"
         }
     ],
-    "require": {
-        "php": ">=5.2.0"
+    "require" : {
+        "php" : ">=5.2.0"
     }
 }
