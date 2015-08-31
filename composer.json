@@ -1,6 +1,5 @@
 {
     "name" : "muntashir/word-grid",
-    "version" : "1.0.0",
     "description" : "WordGrid Game",
     "keywords" : ["WordGrid","Game","PHP","Word","Grid"],
     "homepage" : "http://http://muntashir.bplaced.net/WordGrid",
